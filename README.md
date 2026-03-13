@@ -1,10 +1,8 @@
 # 🚀 UCPOF: Uncertainty-Calibrated Prompt Optimization Framework
 
-![Paper-ESWA](https://img.shields.io/badge/Paper-ESWA-blue) ![Python](https://img.shields.io/badge/python-3.9+-blue.svg) ![License](https://img.shields.io/badge/License-MIT-yellow.svg)
+![Python](https://img.shields.io/badge/python-3.9+-blue.svg) ![License](https://img.shields.io/badge/License-MIT-yellow.svg)
 
 > **[English]** | [[中文文档](README_zh-CN.md)]
-
-Official implementation for the paper: **"How Confident Is the First Token? An Uncertainty-Calibrated Prompt Optimization Framework for Large Language Model Classification and Understanding"**.
 
 ## 💡 About The Project
 
@@ -99,18 +97,9 @@ UCPOF/
 └── README.md           
 ```
 
-## 📖 Citation
+## 📖 Acknowledgments
 
-If you find this framework useful for your research, please consider citing our paper:
-
-```bibtex
-@article{chen2024confident,
-  title={How Confident Is the First Token? An Uncertainty-Calibrated Prompt Optimization Framework for Large Language Model Classification and Understanding},
-  author={Chen, Wei and Ju, Guoyang and Qi, Yuanyuan},
-  journal={Expert Systems with Applications (Under Review)},
-  year={2024}
-}
-```
+We would like to thank the open-source community for their valuable contributions to the tools and libraries used in this project.
 
 ## 📄 License
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.

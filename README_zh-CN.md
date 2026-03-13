@@ -1,10 +1,8 @@
 # 🚀 UCPOF: 不确定性校准的提示优化框架
 
-![Paper-ESWA](https://img.shields.io/badge/Paper-ESWA-blue) ![Python](https://img.shields.io/badge/python-3.9+-blue.svg) ![License](https://img.shields.io/badge/License-MIT-yellow.svg)
+![Python](https://img.shields.io/badge/python-3.9+-blue.svg) ![License](https://img.shields.io/badge/License-MIT-yellow.svg)
 
 > [[English]](README.md) | **[中文文档]**
-
-论文 **"How Confident Is the First Token? An Uncertainty-Calibrated Prompt Optimization Framework for Large Language Model Classification and Understanding"** 的官方实现。
 
 ## 💡 关于项目
 
@@ -99,18 +97,9 @@ UCPOF/
 └── README.md           
 ```
 
-## 📖 引用
+## 📖 致谢
 
-如果你发现这个框架对你的研究有用，请考虑引用我们的论文：
-
-```bibtex
-@article{chen2024confident,
-  title={How Confident Is the First Token? An Uncertainty-Calibrated Prompt Optimization Framework for Large Language Model Classification and Understanding},
-  author={Chen, Wei and Ju, Guoyang and Qi, Yuanyuan},
-  journal={Expert Systems with Applications (Under Review)},
-  year={2024}
-}
-```
+我们感谢开源社区对本项目中使用的工具和库所做出的宝贵贡献。
 
 ## 📄 许可证
 本项目采用 MIT 许可证 - 详情请参阅 [LICENSE](LICENSE) 文件。
