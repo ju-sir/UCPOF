@@ -1,5 +1,4 @@
 # UCPOF
-<<<<<<< HEAD
 
 UCPOF (Unified Context Prompt Optimization Framework) 是一套用于 prompt 优化和动态 RAG 选择的框架，旨在提高大语言模型在不同任务和数据集上的性能。
 
@@ -188,5 +187,3 @@ UCPOF 框架通过以下步骤优化 prompt 和动态选择 RAG：
 ## 许可证
 
 本项目采用 MIT 许可证，详见 LICENSE 文件。
-=======
->>>>>>> b1a9c8e9141d7ecdd865430ab9e3d8c6345f37bf
