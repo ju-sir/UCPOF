@@ -1,0 +1,30 @@
+# CASIE 数据集配置
+
+# 数据集路径
+paths:
+  prior_dataset: "path/to/casie/train.json"
+  dataset: "path/to/casie/train.json"
+
+# 类别列表
+all_types:
+  - "Positive"
+  - "Negative"
+  - "Neutral"
+
+# Prompt 模板
+templates:
+  good_examples: |
+    --- EXAMPLES ---
+    Example 1:
+    Input: "The movie was fantastic! I loved every minute of it."
+    Output: "Positive"
+    Example 2:
+    Input: "I was very disappointed with the service."
+    Output: "Negative"
+    Example 3:
+    Input: "The weather today is mild."
+    Output: "Neutral"
+
+  task: |
+    --- Task ---
+    Please classify the sentiment of the following sentence as Positive, Negative, or Neutral. Do not include any additional text, explanations, or notes - only output the selected sentiment.

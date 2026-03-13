@@ -1,0 +1,60 @@
+# ACE 数据集配置
+
+# 数据集路径
+paths:
+  prior_dataset: "/home/jgy/paper-prompt/ACE/train.json"
+  dataset: "/home/jgy/paper-prompt/ACE/train.json"
+
+# 类别列表
+all_types:
+  - "declare bankruptcy"
+  - "transfer ownership"
+  - "transfer money"
+  - "marry"
+  - "transport"
+  - "die"
+  - "phone write"
+  - "arrest jail"
+  - "convict"
+  - "sentence"
+  - "sue"
+  - "end organization"
+  - "start organization"
+  - "end position"
+  - "start position"
+  - "meet"
+  - "elect"
+  - "attack"
+  - "injure"
+  - "born"
+  - "fine"
+  - "release parole"
+  - "charge indict"
+  - "extradite"
+  - "trial hearing"
+  - "demonstrate"
+  - "divorce"
+  - "nominate"
+  - "appeal"
+  - "pardon"
+  - "execute"
+  - "acquit"
+  - "merge organization"
+
+# Prompt 模板
+templates:
+  good_examples: |
+    --- EXAMPLES ---
+    Example 1:
+    Input: "I visited all their families ."
+    Output: "meet"
+    Example 2:
+    Input: "He claimed Iraqi troops had destroyed five tanks ."
+    Output: "attack"
+    Example 3:
+    Input: "Another appeal is now pending in the Federal Court ."
+    Output: "appeal"
+
+  task: |
+    --- Task ---
+    Please select the most appropriate type of the following sentence from the type list.The type list is : ['declare bankruptcy', 'transfer ownership', 'transfer money', 'marry', 'transport', 'die', 'phone write', 'arrest jail', 'convict', 'sentence', 'sue', 'end organization', 'start organization', 'end position', 'start position', 'meet', 'elect', 'attack', 'injure', 'born', 'fine', 'release parole', 'charge indict', 'extradite', 'trial hearing', 'demonstrate', 'divorce', 'nominate', 'appeal', 'pardon', 'execute', 'acquit', 'merge organization'],You must choose one type from the type list and follow the examples output. Do not include any additional text, explanations, or notes - only output the selected type.

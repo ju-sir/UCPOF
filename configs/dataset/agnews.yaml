@@ -1,0 +1,31 @@
+# AG News 数据集配置
+
+# 数据集路径
+paths:
+  prior_dataset: "path/to/agnews/train.json"
+  dataset: "path/to/agnews/train.json"
+
+# 类别列表
+all_types:
+  - "World"
+  - "Sports"
+  - "Business"
+  - "Science/Technology"
+
+# Prompt 模板
+templates:
+  good_examples: |
+    --- EXAMPLES ---
+    Example 1:
+    Input: "New study finds promising treatment for cancer."
+    Output: "Science/Technology"
+    Example 2:
+    Input: "Team wins championship after intense game."
+    Output: "Sports"
+    Example 3:
+    Input: "Stock market reaches new high."
+    Output: "Business"
+
+  task: |
+    --- Task ---
+    Please classify the following news headline into one of the following categories: World, Sports, Business, or Science/Technology. Do not include any additional text, explanations, or notes - only output the selected category.
