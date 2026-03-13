@@ -1,14 +1,25 @@
-# ACE 数据集配置
+# 消融实验配置
 
-# 数据集路径
+# 数据路径
 paths:
-  prior_dataset: "data/ACE/train.json"
-  dataset: "data/ACE/train.json"
+  train_csv: "data/ablation/train_metrics.csv"
+  test_dataset: "data/ACE/dev.json"
+  kb_data: "data/ACE/train.json"
+  output_dir: "./final_comprehensive_study"
+
+# 模型配置
+model:
+  path: "/data/models/Qwen2.5-7B-Instruct"
 
 # 核心超参数
-params:
+hyperparams:
+  target_error_coverage: 0.90
   static_shot_num: 3
-  rag_retrieval_num: 5
+  rag_retrieval_num: 3
+  run_full_rag_analysis: true
+
+# 目标标签
+target_label: "Examples->Task"
 
 # 类别列表
 all_types:

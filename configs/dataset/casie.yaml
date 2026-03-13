@@ -2,8 +2,13 @@
 
 # 数据集路径
 paths:
-  prior_dataset: "path/to/casie/train.json"
-  dataset: "path/to/casie/train.json"
+  prior_dataset: "data/casie/train.json"
+  dataset: "data/casie/train.json"
+
+# 核心超参数
+params:
+  static_shot_num: 3
+  rag_retrieval_num: 3
 
 # 类别列表
 all_types:

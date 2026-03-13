@@ -1,10 +1,12 @@
+from typing import Dict, List, Optional, Any
+
 class PromptManager:
-    def __init__(self, dataset_config):
+    def __init__(self, dataset_config: Dict[str, Any]):
         """初始化Prompt管理器"""
         self.dataset_config = dataset_config
-        self.templates = dataset_config.get('templates', {})
+        self.templates: Dict[str, str] = dataset_config.get('templates', {})
     
-    def build_prompt(self, input_text, rag_context=None, prompt_type="examples_task"):
+    def build_prompt(self, input_text: str, rag_context: Optional[str] = None, prompt_type: str = "examples_task") -> List[Dict[str, str]]:
         """构建动态Prompt"""
         if prompt_type == "examples_task":
             # Examples -> Task 顺序
@@ -28,6 +30,6 @@ class PromptManager:
         
         return messages
     
-    def get_chat_template(self, messages, tokenizer):
+    def get_chat_template(self, messages: List[Dict[str, str]], tokenizer: Any) -> str:
         """获取聊天模板"""
         return tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)

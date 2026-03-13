@@ -3,12 +3,13 @@ import torch.nn.functional as F
 from transformers import AutoModelForCausalLM, AutoTokenizer
 import numpy as np
 from scipy.stats import entropy
+from typing import Dict, List, Optional, Tuple, Any
 
 class LLMEngine:
-    def __init__(self, model_config):
-        self.model_path = model_config['model_path']
-        self.params = model_config.get('params', {})
-        self.generation_params = model_config.get('generation', {})
+    def __init__(self, model_config: Dict[str, Any]):
+        self.model_path: str = model_config['model_path']
+        self.params: Dict[str, Any] = model_config.get('params', {})
+        self.generation_params: Dict[str, Any] = model_config.get('generation', {})
         
         # 加载模型和分词器
         self.model = AutoModelForCausalLM.from_pretrained(
@@ -22,7 +23,7 @@ class LLMEngine:
         self.generation_params['pad_token_id'] = self.tokenizer.eos_token_id
         self.generation_params['eos_token_id'] = self.tokenizer.eos_token_id
     
-    def get_logits(self, input_text):
+    def get_logits(self, input_text: str) -> Tuple[torch.Tensor, torch.Tensor]:
         """获取模型的logits"""
         inputs = self.tokenizer(input_text, return_tensors="pt", add_special_tokens=False)
         input_ids_tensor = inputs.input_ids.to(self.model.device)
@@ -35,7 +36,7 @@ class LLMEngine:
         
         return next_token_logits, next_token_probs
     
-    def generate(self, input_text):
+    def generate(self, input_text: str) -> str:
         """生成模型输出"""
         inputs = self.tokenizer(input_text, return_tensors="pt", add_special_tokens=False)
         input_ids_tensor = inputs.input_ids.to(self.model.device)
@@ -50,7 +51,7 @@ class LLMEngine:
         
         return prediction_text
     
-    def calculate_entropy(self, probs, top_k=None):
+    def calculate_entropy(self, probs: torch.Tensor, top_k: Optional[int] = None) -> float:
         """计算熵"""
         if top_k:
             # 计算Top-K熵
@@ -63,7 +64,7 @@ class LLMEngine:
         
         return entropy_value
     
-    def calculate_margin(self, probs):
+    def calculate_margin(self, probs: torch.Tensor) -> float:
         """计算Top1-Top2的margin"""
         top2_values, _ = torch.topk(probs, 2)
         if len(top2_values) >= 2:
@@ -73,12 +74,12 @@ class LLMEngine:
         
         return margin
     
-    def get_candidate_probs(self, logits, candidate_token_ids):
+    def get_candidate_probs(self, logits: torch.Tensor, candidate_token_ids: List[int]) -> np.ndarray:
         """获取候选标签的概率"""
         candidate_logits = logits[0, candidate_token_ids]
         candidate_probs = F.softmax(candidate_logits, dim=0).to(torch.float32).cpu().numpy()
         return candidate_probs
     
-    def apply_chat_template(self, messages):
+    def apply_chat_template(self, messages: List[Dict[str, str]]) -> str:
         """应用聊天模板"""
         return self.tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)

@@ -2,8 +2,13 @@
 
 # 数据集路径
 paths:
-  prior_dataset: "path/to/agnews/train.json"
-  dataset: "path/to/agnews/train.json"
+  prior_dataset: "data/agnews/train.json"
+  dataset: "data/agnews/train.json"
+
+# 核心超参数
+params:
+  static_shot_num: 3
+  rag_retrieval_num: 3
 
 # 类别列表
 all_types:

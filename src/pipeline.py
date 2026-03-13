@@ -3,6 +3,8 @@ import random
 import pandas as pd
 from tqdm import tqdm
 import yaml
+import json
+from typing import List, Dict, Any, Optional
 from src.llm_engine import LLMEngine
 from src.rag_retriever import RAGRetriever
 from src.metric import MetricCalculator
@@ -10,16 +12,16 @@ from src.prompt_manager import PromptManager
 from src.utils import parse_prediction_robust, save_metrics_to_csv, calculate_dataset_priors
 
 class UCPOFPipeline:
-    def __init__(self, dataset_config_path, model_config_path, output_dir="./output"):
+    def __init__(self, dataset_config_path: str, model_config_path: str, output_dir: str = "./output"):
         """初始化UCPOF管道"""
         # 加载配置
         with open(dataset_config_path, 'r') as f:
-            self.dataset_config = yaml.safe_load(f)
+            self.dataset_config: Dict[str, Any] = yaml.safe_load(f)
         
         with open(model_config_path, 'r') as f:
-            self.model_config = yaml.safe_load(f)
+            self.model_config: Dict[str, Any] = yaml.safe_load(f)
         
-        self.output_dir = output_dir
+        self.output_dir: str = output_dir
         os.makedirs(self.output_dir, exist_ok=True)
         
         # 初始化组件
@@ -29,34 +31,46 @@ class UCPOFPipeline:
         self.prompt_manager = PromptManager(self.dataset_config)
         
         # 获取数据集配置
-        self.all_types = self.dataset_config.get('all_types', [])
-        self.dataset_path = self.dataset_config['paths']['dataset']
-        self.prior_dataset_path = self.dataset_config['paths']['prior_dataset']
+        self.all_types: List[str] = self.dataset_config.get('all_types', [])
+        self.dataset_path: str = self.dataset_config['paths']['dataset']
+        self.prior_dataset_path: str = self.dataset_config['paths']['prior_dataset']
+        # 获取核心超参数
+        self.static_shot_num: int = self.dataset_config.get('params', {}).get('static_shot_num', 3)
+        self.rag_retrieval_num: int = self.dataset_config.get('params', {}).get('rag_retrieval_num', 3)
     
-    def load_dataset(self, dataset_path):
+    def load_dataset(self, dataset_path: str) -> Optional[List[Dict[str, str]]]:
         """加载数据集"""
-        import json
         try:
             with open(dataset_path, "r", encoding="utf-8") as fh:
                 raw_data = json.load(fh)
         except FileNotFoundError:
+            print(f"Error: Dataset file not found at {dataset_path}")
             return None
+        except json.JSONDecodeError:
+            print(f"Error: Invalid JSON format in {dataset_path}")
+            return None
+        
         eval_data = []
         for item in raw_data:
             try:
                 sentence = item["messages"][1]["content"]
                 label = item["messages"][2]["content"].split('#')[0].strip()
                 eval_data.append({"sentence": sentence, "label": label})
-            except (IndexError, KeyError, TypeError):
+            except (IndexError, KeyError, TypeError) as e:
+                print(f"Warning: Skipping invalid item in dataset: {e}")
                 continue
+        
+        if not eval_data:
+            print(f"Warning: No valid data found in {dataset_path}")
+        
         return eval_data
     
-    def build_rag_index(self, dataset):
+    def build_rag_index(self, dataset: List[Dict[str, str]]) -> None:
         """构建RAG索引"""
         corpus = [item['sentence'] for item in dataset]
         self.rag_retriever.build_index(corpus)
     
-    def run_offline(self, num_samples=5000):
+    def run_offline(self, num_samples: int = 5000) -> Optional[pd.DataFrame]:
         """运行离线流程，提取特征"""
         # 加载数据集
         full_dataset = self.load_dataset(self.dataset_path)
@@ -149,12 +163,12 @@ class UCPOFPipeline:
         
         return df
     
-    def run_online(self, input_text, use_rag=True):
+    def run_online(self, input_text: str, use_rag: bool = True) -> Dict[str, Any]:
         """运行在线流程，处理单个输入"""
         # 构建RAG上下文
         rag_context = None
         if use_rag:
-            rag_context = self.rag_retriever.get_context(input_text)
+            rag_context = self.rag_retriever.get_context(input_text, k=self.rag_retrieval_num)
         
         # 构建Prompt
         messages = self.prompt_manager.build_prompt(input_text, rag_context=rag_context)

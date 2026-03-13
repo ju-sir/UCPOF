@@ -1,12 +1,15 @@
 import numpy as np
 from scipy.stats import entropy
+import torch
+import torch.nn.functional as F
+from typing import List, Tuple
 
 class MetricCalculator:
     def __init__(self):
         """初始化指标计算器"""
         pass
     
-    def safe_entropy(self, prob_vector):
+    def safe_entropy(self, prob_vector: List[float]) -> float:
         """安全计算熵"""
         pv = np.clip(np.asarray(prob_vector), 1e-12, 1.0)
         s = pv.sum()
@@ -14,15 +17,12 @@ class MetricCalculator:
         pv = pv / s # 归一化，确保和为1
         return float(entropy(pv, base=2))
     
-    def calculate_label_entropy(self, candidate_probs):
+    def calculate_label_entropy(self, candidate_probs: List[float]) -> float:
         """计算标签熵"""
         return self.safe_entropy(candidate_probs)
     
-    def calculate_nll(self, logits, target_ids):
+    def calculate_nll(self, logits: torch.Tensor, target_ids: List[int]) -> float:
         """计算负对数似然"""
-        import torch
-        import torch.nn.functional as F
-        
         log_probs = F.log_softmax(logits, dim=-1)
         nll = 0.0
         for i, tid in enumerate(target_ids):
@@ -30,7 +30,7 @@ class MetricCalculator:
         
         return nll
     
-    def fit_threshold(self, metrics, accuracies):
+    def fit_threshold(self, metrics: List[float], accuracies: List[int]) -> Tuple[float, float]:
         """拟合动态阈值"""
         # 这里实现一个简单的阈值拟合逻辑
         # 实际应用中可能需要更复杂的方法
@@ -48,7 +48,7 @@ class MetricCalculator:
         
         return best_threshold, best_accuracy
     
-    def calculate_lsfu_score(self, label_entropy, logit_margin, pred_prior_prob):
+    def calculate_lsfu_score(self, label_entropy: float, logit_margin: float, pred_prior_prob: float) -> float:
         """计算LSFU分数"""
         # 这里实现LSFU分数的计算逻辑
         # 实际应用中可能需要根据具体情况调整
