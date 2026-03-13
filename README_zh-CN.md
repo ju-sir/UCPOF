@@ -48,39 +48,44 @@ pip install -r requirements.txt
 ### 1. 配置你的数据集和模型
 检查 `configs/dataset/ace.yaml` 和 `configs/model/qwen_7b.yaml` 来设置你的数据路径、标签空间和模型路径。
 
-### 2. 运行完整的 UCPOF 管道
+### 2. 提取特征（离线阶段）
+首先，为每个数据样本提取特征，包括 LSFU 分数，并将它们保存到 CSV 文件中：
+```bash
+python scripts/extract_features.py \
+    --dataset_config configs/dataset/ace.yaml \
+    --model_config configs/model/qwen_7b.yaml \
+    --output_dir ./outputs
+```
+*此脚本计算每个样本的 LSFU 分数和其他指标，并将它们保存到 CSV 文件中以供进一步分析。*
+
+### 3. 运行完整的 UCPOF 管道
+提取特征后，运行完整的 UCPOF 管道进行在线推理：
 ```bash
 python scripts/run_ucpof.py \
     --dataset_config configs/dataset/ace.yaml \
     --model_config configs/model/qwen_7b.yaml \
     --output_dir ./outputs
 ```
-*此脚本会自动运行离线准备（计算先验、寻找 gold-shots、设置动态阈值）和在线推理（自适应 RAG）。*
+*此脚本使用提取的特征执行自适应 RAG 推理，平衡成本和准确性。*
 
 ---
 
-## 📊 复现论文实验
+## 📊 分析结果
 
-为了方便审稿人和研究人员，我们提供了现成的脚本，可以完美复现论文中的表格和图表。
+运行管道后，你可以分析结果以获得具体的指标值：
 
-### 主要结果和效率（表 2，图 6 和 7）
-要复现帕累托效率曲线以及 Baseline、Gold-Shot 和 Full RAG 之间的性能比较：
+### 性能分析
+要分析性能指标并生成可视化：
 ```bash
-python scripts/run_ucpof.py --dataset_config configs/dataset/ace.yaml --run_analysis
 python analysis/plot_pareto_efficiency.py --csv_path outputs/results.csv
-```
-
-### 消融实验（表 4，5，6，7）
-要复现消融实验（例如，检查 $P_{prior}$ 的必要性以及 LSFU 与标准熵的比较）：
-```bash
-python scripts/run_ablation.py --config configs/experiment/ablation.yaml
-```
-
-### 指标验证（图 3 和 4）
-要绘制风险-覆盖率曲线和 LSFU 分数的 KDE 分布：
-```bash
 python analysis/plot_risk_coverage.py --csv_path outputs/results.csv
 python analysis/plot_kde_distribution.py --csv_path outputs/results.csv
+```
+
+### 消融分析
+要分析不同组件对性能的影响：
+```bash
+python scripts/run_ablation.py --config configs/experiment/ablation.yaml
 ```
 
 ---

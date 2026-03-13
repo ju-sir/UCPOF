@@ -48,39 +48,44 @@ We decouple configurations from the code. You can easily adapt UCPOF to your own
 ### 1. Configure your Dataset & Model
 Check `configs/dataset/ace.yaml` and `configs/model/qwen_7b.yaml` to set your data paths, label spaces, and model paths.
 
-### 2. Run the full UCPOF Pipeline
+### 2. Extract Features (Offline Phase)
+First, extract features for each data sample, including LSFU scores, and save them to a CSV file:
+```bash
+python scripts/extract_features.py \
+    --dataset_config configs/dataset/ace.yaml \
+    --model_config configs/model/qwen_7b.yaml \
+    --output_dir ./outputs
+```
+*This script calculates LSFU scores and other metrics for each sample and saves them to a CSV file for further analysis.*
+
+### 3. Run the full UCPOF Pipeline
+After extracting features, run the complete UCPOF pipeline for online inference:
 ```bash
 python scripts/run_ucpof.py \
     --dataset_config configs/dataset/ace.yaml \
     --model_config configs/model/qwen_7b.yaml \
     --output_dir ./outputs
 ```
-*This script automatically runs the offline preparation (calculating priors, finding gold-shots, setting dynamic thresholds) and online inference (adaptive RAG).*
+*This script uses the extracted features to perform adaptive RAG inference, balancing cost and accuracy.*
 
 ---
 
-## 📊 Reproducing Paper Experiments
+## 📊 Analyzing Results
 
-For reviewers and researchers, we provide ready-to-use scripts to perfectly reproduce the tables and figures in our paper.
+After running the pipeline, you can analyze the results to obtain specific metric values:
 
-### Main Results & Efficiency (Table 2, Fig 6 & 7)
-To reproduce the Pareto efficiency curves and the performance comparison between Baseline, Gold-Shot, and Full RAG:
+### Performance Analysis
+To analyze the performance metrics and generate visualizations:
 ```bash
-python scripts/run_ucpof.py --dataset_config configs/dataset/ace.yaml --run_analysis
 python analysis/plot_pareto_efficiency.py --csv_path outputs/results.csv
-```
-
-### Ablation Studies (Table 4, 5, 6, 7)
-To reproduce the ablation studies (e.g., examining the necessity of $P_{prior}$ and LSFU vs. standard entropy):
-```bash
-python scripts/run_ablation.py --config configs/experiment/ablation.yaml
-```
-
-### Metric Validation (Fig 3 & 4)
-To plot the Risk-Coverage curves and the KDE distribution of LSFU scores:
-```bash
 python analysis/plot_risk_coverage.py --csv_path outputs/results.csv
 python analysis/plot_kde_distribution.py --csv_path outputs/results.csv
+```
+
+### Ablation Analysis
+To analyze the impact of different components on performance:
+```bash
+python scripts/run_ablation.py --config configs/experiment/ablation.yaml
 ```
 
 ---
